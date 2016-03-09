@@ -116,6 +116,6 @@ for i = 1:length(joint_angles)
     end
 end
 
-joint_angles = round(joint_angles,4);
+% joint_angles = (joint_angles,4);
 
 end
