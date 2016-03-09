@@ -26,27 +26,36 @@ for t = 1:size(s,2)
     
     % Set desired brush color from path file (think about how to handle
     % changes in color)
-    fanuc.brush = [];
+    fanuc.brush = fanuc.brush_colors(c(t));
     ...
     
     % Select desired orientation for the tool (your choice)
     ...
+        
     
     % Set desired position for the tool from path file (not your choice)
     ...
     
     % Solve inverse kinematics for nearest solution
-    ...
-    
+    ...    
+    [is_solution,joint_angles]=fanucIK(T,prev_joint_angles,fanuc)
     % Move robot using setFanuc() if solution exists
     ...
-    
+    if is_solution==true
+        setFanuc( angles, fanuc )
+        disp(t)
+    else
+        error('The solution does not exist')
+    end
+
     % Plot a point at the tool brush tip with the appropriate color
     % (unless the brush selection is zero)
     ...
-    
+    plot3(s(1,t),s(2,t),s(3,t),fanuc.brush)
     % Update previous joint angles
     ...
+    prev_joint_angles=joint_angles
+
 
 end
 
