@@ -22,19 +22,16 @@ fanuc.handles = drawFanuc(prev_joint_angles,fanuc);
 hold on;
 
 % Draw in 3D
-for t = 1:size(s,2)
+for t = 1:size(s,2);
     
     % Set desired brush color from path file (think about how to handle
     % changes in color)
-    fanuc.brush = fanuc.brush_colors(c(t));
-    ...
+    color = fanuc.brush_colors{c(t)};
     
     % Select desired orientation for the tool (your choice)
-    ...
         
     
     % Set desired position for the tool from path file (not your choice)
-    ...
     tool_pos = s(1:3,t);
     T = eye(4); T(1,4) = tool_pos(1); T(2,4) = tool_pos(2); T(3,4) = tool_pos(3);
     
@@ -43,9 +40,9 @@ for t = 1:size(s,2)
     [is_solution,joint_angles]=fanucIK(T,prev_joint_angles,fanuc);
     % Move robot using setFanuc() if solution exists
     ...
-    if is_solution==true
-        setFanuc(joint_angles, fanuc)
-        disp(t)
+    if is_solution == true;
+        setFanuc(joint_angles, fanuc);
+        disp(num2str(t))
     else
         error('The solution does not exist')
     end
@@ -53,7 +50,10 @@ for t = 1:size(s,2)
     % Plot a point at the tool brush tip with the appropriate color
     % (unless the brush selection is zero)
     ...
-    plot3(s(1,t),s(2,t),s(3,t),fanuc.brush)
+    plot3(s(1,t),s(2,t),s(3,t),'MarkerEdgeColor',color, 'Marker', '.' ...
+        , 'MarkerSize', 18)
+    pause(0.25)
+    
     % Update previous joint angles
     ...
     prev_joint_angles = joint_angles;
