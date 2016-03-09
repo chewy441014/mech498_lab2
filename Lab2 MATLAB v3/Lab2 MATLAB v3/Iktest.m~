@@ -1,0 +1,9 @@
+%IK_test
+
+prev_joint_angles=[0,0,0,0,0,0];
+
+fanuc=fanucInit
+
+T=makehgtform('translate',[500 500 500])
+
+[is_solution,joint_angles]=fanucIK(T,prev_joint_angles,fanuc)
