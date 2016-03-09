@@ -88,7 +88,7 @@ fanuc_struct.joint_limits{6} = [-450,450]*deg2rad;
 
 % Set bounds on the cartesian workspace of the FANUC for plotting in the
 % form:  [ xmin, xmax, ymin, ymax, zmin, zmax]
-fanuc_struct.workspace = [-2739*cos(30), 2739, -2739, 2739, -721, 3238];
+fanuc_struct.workspace = [-2739*cos(30), 2739, -2739, 2739, -1721, 2238];
 ...
 
 % Set colors to be drawn for each link and associated frame, including the

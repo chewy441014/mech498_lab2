@@ -41,9 +41,9 @@ for t = 1:size(s,2);
     T1=inv(Ttool)*T;
     
     %shifts down l_1 to adjust from the shift of frame 0
-    Tdown=[1 0 0 0; 0 1 0 0; 0 0 1 -fanuc.parameters.l_1; 0 0 0 1];
+    Tdown=[1 0 0 0; 0 1 0 0; 0 0 1 -l_1; 0 0 0 1]
     
-    Tend_effector=inv(Tdown)*T1;
+    Tend_effector=Tdown*T
     
     % Solve inverse kinematics for nearest solution
     ...    
