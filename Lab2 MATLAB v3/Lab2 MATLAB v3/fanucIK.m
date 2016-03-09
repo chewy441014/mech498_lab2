@@ -80,34 +80,41 @@ B1=atan2(sqrt(R(3,1)^2+R(3,2)^2),R(3,3));
 B2=atan2(-sqrt(R(3,1)^2+R(3,2)^2),R(3,3));
 
 if abs(B1-prev_joint_angles(5))<abs(B2-prev_joint_angles(5))
-    joint_angles(5)=B1;
+    B=B1;
 else
-    joint_angles(5)=B2;
+    B=B2;
 end
 
-B = joint_angles(5);
+%address the singularity
+if B==0;
+    joint_angles(5)=prev_joint_angles(5);
+else
+    joint_angles(5)=B;
+end
 
 %theta 4 solutions
 C=atan2(R(2,3)/sin(B),R(1,3)/sin(B));
-D=atan2(R(2,3)/sin(B),R(1,3)/sin(B))+pi;
+% D=atan2(R(2,3)/sin(B),R(1,3)/sin(B))+pi;
+joint_angles(4)=C;
 
 %compares theta 4 solutions
-if abs(C-prev_joint_angles(4))<abs(D-prev_joint_angles(4))
-    joint_angles(4)=C;
-else
-    joint_angles(4)=D;
-end
+% if abs(C-prev_joint_angles(4))<abs(D-prev_joint_angles(4))
+%     joint_angles(4)=C;
+% else
+%     joint_angles(4)=D;
+% end
 
 %theta 6 solution
 E=atan2(R(3,2)/sin(B),-R(3,1)/sin(B));
-F=atan2(R(3,2)/sin(B),-R(3,1)/sin(B))+pi;
+% F=atan2(R(3,2)/sin(B),-R(3,1)/sin(B))+pi;
+joint_angles(6)=E;
 
 %compares theta 6 solutions
-if abs(E-prev_joint_angles(4))<abs(F-prev_joint_angles(4))
-    joint_angles(6)=E;
-else
-    joint_angles(6)=F;
-end
+% if abs(E-prev_joint_angles(4))<abs(F-prev_joint_angles(4))
+%     joint_angles(6)=E;
+% else
+%     joint_angles(6)=F;
+% end
 
 %compares solution to limits on robot
 for i = 1:length(joint_angles)
