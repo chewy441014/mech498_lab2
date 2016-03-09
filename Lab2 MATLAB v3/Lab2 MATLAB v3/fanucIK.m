@@ -46,7 +46,8 @@ elseif z<zmin
 end
 
 %theta 1 solution
-joint_angles(1)=atan2(y,x);
+theta1=atan2(y,x);
+joint_angles_cellarr{1} = theta1;
 
 %theta 2 solutions
 x1=sqrt(x^2+y^2)-l_2;
@@ -55,18 +56,18 @@ d=sqrt(l_4^2+l_5^2);
 
 theta2a=pi/2 - (atan2(z1,x1)+acos((x1^2+z1^2+l_3^2-d^2)/(2*l_3*sqrt(x1^2+z1^2))));
 theta2b=pi/2 - (atan2(z1,x1)-acos((x1^2+z1^2+l_3^2-d^2)/(2*l_3*sqrt(x1^2+z1^2))));
-
-%select the closer solution
-if abs(theta2a-prev_joint_angles(2))<abs(theta2b-prev_joint_angles(2))
-    joint_angles(2)=theta2a;
-else
-    joint_angles(2)=theta2b;
-end
+joint_angles_cellarr{2} = [theta2a, theta2b];
 
 %theta 3 solution
-joint_angles(3)=pi/2 - acos((x1^2+z1^2-l_3^2-d^2)/(2*l_3*d)) - atan2(l_4,l_5);
+theta3a=pi/2 - acos((x1^2+z1^2-l_3^2-d^2)/(2*l_3*d)) - atan2(l_4,l_5);
+theta3b=pi/2 + acos((x1^2+z1^2-l_3^2-d^2)/(2*l_3*d)) - atan2(l_4,l_5);
+joint_angles_cellarr{3} = [theta3a, theta3b];
 
-[~,T,fanuc_T] = fanucFK(joint_angles,fanuc);
+joint_angles(1) = joint_angles_cellarr{1};
+joint_angles(2) = min(abs(joint_angles_cellarr{2} - prev_joint_angles(2)));
+joint_angles(3) = min(abs(joint_angles_cellarr{3} - prev_joint_angles(3)));
+
+[~,~,fanuc_T] = fanucFK(joint_angles,fanuc);
 
 T04=fanuc_T{1}*fanuc_T{2}*fanuc_T{3}*fanuc_T{4};
 R04=T04(1:3,1:3);
@@ -78,43 +79,38 @@ R=R04i*R06;
 %theta 5 solutions
 B1=atan2(sqrt(R(3,1)^2+R(3,2)^2),R(3,3));
 B2=atan2(-sqrt(R(3,1)^2+R(3,2)^2),R(3,3));
-
-if abs(B1-prev_joint_angles(5))<abs(B2-prev_joint_angles(5))
-    B=B1;
-else
-    B=B2;
-end
-
-%address the singularity
-if B==0;
-    joint_angles(5)=prev_joint_angles(5);
-else
-    joint_angles(5)=B;
-end
+joint_angles_cellarr{5} = [B1,B2];
+disp(joint_angles_cellarr{5})
 
 %theta 4 solutions
-C=atan2(R(2,3)/sin(B),R(1,3)/sin(B));
-% D=atan2(R(2,3)/sin(B),R(1,3)/sin(B))+pi;
-joint_angles(4)=C;
-
-%compares theta 4 solutions
-% if abs(C-prev_joint_angles(4))<abs(D-prev_joint_angles(4))
-%     joint_angles(4)=C;
-% else
-%     joint_angles(4)=D;
-% end
+C=atan2(R(2,3)./sin(joint_angles_cellarr{5}),R(1,3)./sin(joint_angles_cellarr{5}));
+D=atan2(R(2,3)./sin(joint_angles_cellarr{5}),R(1,3)./sin(joint_angles_cellarr{5}))+pi;
+joint_angles_cellarr{4} = [C, D];
+disp(joint_angles_cellarr{4})
 
 %theta 6 solution
-E=atan2(R(3,2)/sin(B),-R(3,1)/sin(B));
-% F=atan2(R(3,2)/sin(B),-R(3,1)/sin(B))+pi;
-joint_angles(6)=E;
+E=atan2(R(3,2)./sin(joint_angles_cellarr{5}),-R(3,1)./sin(joint_angles_cellarr{5}));
+F=atan2(R(3,2)./sin(joint_angles_cellarr{5}),-R(3,1)./sin(joint_angles_cellarr{5}))+pi;
+G=atan2(R(3,2)./sin(joint_angles_cellarr{5}),-R(3,1)./sin(joint_angles_cellarr{5}))-pi;
+joint_angles_cellarr{6} = [E, F, G];
+disp(joint_angles_cellarr{6})
 
-%compares theta 6 solutions
-% if abs(E-prev_joint_angles(4))<abs(F-prev_joint_angles(4))
-%     joint_angles(6)=E;
-% else
-%     joint_angles(6)=F;
-% end
+joint_angles(5) = min(abs(joint_angles_cellarr{5} - prev_joint_angles(5)));
+if (joint_angles(5) ~= joint_angles_cellarr{5}(1)) + 1 == 1
+    joint_angles(4) = min(abs(joint_angles_cellarr{4}([1,3]) - prev_joint_angles(4)));
+    joint_angles(6) = min(abs(joint_angles_cellarr{6}([1,3,5]) - prev_joint_angles(6)));
+else
+    joint_angles(4) = min(abs(joint_angles_cellarr{4}([2,4]) - prev_joint_angles(4)));
+    joint_angles(6) = min(abs(joint_angles_cellarr{6}([2,4,6]) - prev_joint_angles(6)));
+end
+
+if round(joint_angles(5),4) == 0
+    joint_angles(4) = 0;
+    joint_angles(6) = atan2(-R(1,2),R(1,1));
+elseif round(joint_angles(5),4) == pi || round(joint_angles(5),4) == -pi
+    joint_angles(4) = 0;
+    joint_angles(6) = atan2(R(1,2),-R(1,1));
+end
 
 %compares solution to limits on robot
 for i = 1:length(joint_angles)
@@ -123,6 +119,6 @@ for i = 1:length(joint_angles)
     end
 end
 
-% joint_angles = (joint_angles,4);
+joint_angles = round(joint_angles,4)
 
 end
