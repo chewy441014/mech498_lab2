@@ -9,7 +9,7 @@ function setFanuc( angles, fanuc )
 % 
 % 
 
-[~,fanuc_T] = fanucFK(angles,fanuc);
+[~,~,fanuc_T] = fanucFK(angles,fanuc);
 set(fanuc.handles(1),'Matrix',fanuc_T{1});
 set(fanuc.handles(2),'Matrix',fanuc_T{2});
 set(fanuc.handles(3),'Matrix',fanuc_T{3});
