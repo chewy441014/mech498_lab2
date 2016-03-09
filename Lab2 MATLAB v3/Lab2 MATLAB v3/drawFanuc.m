@@ -195,7 +195,7 @@ drawnow;
 
 
 % Return hgtransform handles
-%handles = [T_1,T_2,T_3,T_4,T_5,T_6,T_7,T_8,T_9,T_10];
+handles = [T_1,T_2,T_3,T_4,T_5,T_6,T_7,T_8,T_9,T_10];
 
     function h = drawRobotFrame( color )
          
