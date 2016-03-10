@@ -24,6 +24,7 @@ hold on;
 % Draw in 3D
 for t = 1:size(s,2);
     
+    
     % Set desired brush color from path file (think about how to handle
     % changes in color)
     color = fanuc.brush_colors{c(t)};
@@ -33,23 +34,20 @@ for t = 1:size(s,2);
     
     % Set desired position for the tool from path file (not your choice)
     tool_pos = s(1:3,t);
-    T = eye(4); T(1,4) = tool_pos(1); T(2,4) = tool_pos(2); T(3,4) = tool_pos(3);
-    
-    Ttool=fanuc.tool{c(t)};
+    T = eye(4); 
+    T(1,4) = tool_pos(1); 
+    T(2,4) = tool_pos(2); 
+    T(3,4) = tool_pos(3)+1000;
     
     %shifts back from tool frame to end effector frame
+    Ttool = fanuc.tool{c(t)};
     T1=inv(Ttool)*T;
-    
-    %shifts down l_1 to adjust from the shift of frame 0
-    Tdown=[1 0 0 0; 0 1 0 0; 0 0 1 -fanuc.parameters.l_1; 0 0 0 1];
-    
-    Tend_effector=inv(Tdown)*T1;
-    
+
     % Solve inverse kinematics for nearest solution
-    ...    
-    [is_solution,joint_angles]=fanucIK(Tend_effector,prev_joint_angles,fanuc);
+
+    [is_solution,joint_angles]=fanucIK(T1,prev_joint_angles,fanuc);
     % Move robot using setFanuc() if solution exists
-    ...
+
     if is_solution == true;
         setFanuc(joint_angles, fanuc);
         disp(num2str(t))
