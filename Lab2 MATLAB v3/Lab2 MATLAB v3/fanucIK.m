@@ -20,10 +20,12 @@ l_5 = fanuc.parameters.l_5;
 %l_t = fanuc.parameters.l_t
 %l_t_rad = fanuc.parameters.l_t_rad
 
+%initialize variables
 is_solution=true;
+joint_angles_mat = zeros(4,6);
 
+%end position adjusted for link 5 (rotated according to T)
 pos = T(1:3,4) - T(1:3,1:3)*[0; 0; l_4];
-
 x=pos(1);
 y=pos(2);
 z=pos(3);
@@ -49,24 +51,32 @@ elseif z<zmin
     disp('zmin ')
 end
 
-joint_angles_mat = zeros(4,6);
-
 %theta 1 solution
+%assumption: only one solution
 theta1=atan2(y,x);
 joint_angles_mat(:,1) = ones(4,1)*theta1;
 
 %theta 2 solutions
+%geometric constants
 x1=sqrt(x^2+y^2)-l_2;
 z1=z;
 d=sqrt(l_4^2+l_5^2);
 
-theta2a=pi/2 - (atan2(z1,x1)+acos((x1^2+z1^2+l_3^2-d^2)/(2*l_3*sqrt(x1^2+z1^2))));
-theta2b=pi/2 - (atan2(z1,x1)-acos((x1^2+z1^2+l_3^2-d^2)/(2*l_3*sqrt(x1^2+z1^2))));
+%assumption: two solutions
+trident = acos((x1^2+z1^2+l_3^2-d^2)/(2*l_3*sqrt(x1^2+z1^2)));
+if trident < 0
+    trident = trident + pi/2;
+end
+if trident > pi/2
+    trident = trident - pi/2;
+end
+theta2a=pi/2 - atan2(z1,x1) + trident;
+theta2b=pi/2 - atan2(z1,x1) - trident;
 joint_angles_mat(:,2) = [theta2a, theta2b, theta2a, theta2b]';
 
 %theta 3 solution
-theta3a=pi/2 + acos((x1^2+z1^2-l_3^2-d^2)/(2*l_3*d)) - atan2(l_4,l_5);
-theta3b=pi/2 - acos((x1^2+z1^2-l_3^2-d^2)/(2*l_3*d)) - atan2(l_4,l_5);
+theta3a = pi/2 - atan2(l_4,l_5) - acos((x1^2+z1^2-l_3^2-d^2)/(2*l_3*d));
+theta3b=-theta3a;
 if theta2a > 0
     joint_angles_mat(:,3) = joint_angles_mat(:,3) + [theta3b, 0, theta3b, 0]';
 else
@@ -78,7 +88,10 @@ else
     joint_angles_mat(:,3) = joint_angles_mat(:,3) + [0, theta3a, 0, theta3a]';
 end
 
-%loop through
+%loop through joint angles matrix (storage for four solutions)
+%we are assuming there are only two solutions with theta1,2 and 3
+%(elbow up and elbow down)
+%I think everything above is correct but I am double double checking theta3
 for i = 1:2
     joint_angles = joint_angles_mat(i,:);
     
@@ -128,11 +141,11 @@ for i = 1:6
     joint_limits(i) = fanuc.joint_limits{i}(2);
 end
 
-for i = 1:4
-    if sum(abs(joint_angles_mat(i,:)) > joint_limits(i)) > 0
-        joint_angles_mat(i,:) = ones(1,6)*1000000;
-    end
-end
+% for i = 1:4
+%     if sum(abs(joint_angles_mat(i,:)) > joint_limits(i)) > 0
+%         joint_angles_mat(i,:) = ones(1,6)*1000000;
+%     end
+% end
 
 %choose solution
 norm_sol = zeros(1,4);
@@ -142,9 +155,9 @@ end
 
 best_sol =  min(norm_sol);
 if sum(best_sol == norm_sol) > 1
-    index = find(best_sol == norm_sol, 1)
+    index = find(best_sol == norm_sol, 1);
 else
-    index = best_sol == norm_sol
+    index = best_sol == norm_sol;
 end
 joint_angles = joint_angles_mat((index)',:);
 
