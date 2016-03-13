@@ -30,18 +30,19 @@ for t = 1:size(s,2);
     color = fanuc.brush_colors{c(t)};
     
     % Select desired orientation for the tool (your choice)
-        
+    
     
     % Set desired position for the tool from path file (not your choice)
     tool_pos = s(1:3,t);
     T = eye(4); 
     T(1,4) = tool_pos(1); 
     T(2,4) = tool_pos(2); 
-    T(3,4) = tool_pos(3)+1000;
+    T(3,4) = tool_pos(3);
+    T2 = eye(4); T2(3,4) = -1000;
     
     %shifts back from tool frame to end effector frame
     Ttool = fanuc.tool{c(t)};
-    T1=inv(Ttool)*T;
+    T1=inv(Ttool)*T*inv(T2);
 
     % Solve inverse kinematics for nearest solution
 
@@ -50,9 +51,9 @@ for t = 1:size(s,2);
 
     if is_solution == true;
         setFanuc(joint_angles, fanuc);
-        disp(num2str(t))
+        %disp(num2str(t))
     else
-        error('The solution does not exist')
+        disp('The solution does not exist')
     end
 
     % Plot a point at the tool brush tip with the appropriate color
@@ -60,7 +61,7 @@ for t = 1:size(s,2);
     ...
     plot3(s(1,t),s(2,t),s(3,t),'MarkerEdgeColor',color, 'Marker', '.' ...
         , 'MarkerSize', 18)
-    pause(0.25)
+    %pause(0.25)
     
     % Update previous joint angles
     ...

@@ -65,28 +65,29 @@ d=sqrt(l_4^2+l_5^2);
 %assumption: two solutions
 trident = acos((x1^2+z1^2+l_3^2-d^2)/(2*l_3*sqrt(x1^2+z1^2)));
 if trident < 0
-    trident = trident + pi/2;
+    trident = trident + pi;
 end
-if trident > pi/2
-    trident = trident - pi/2;
+if trident > pi
+    trident = trident - pi;
 end
-theta2a=pi/2 - atan2(z1,x1) + trident;
-theta2b=pi/2 - atan2(z1,x1) - trident;
-joint_angles_mat(:,2) = [theta2a, theta2b, theta2a, theta2b]';
+theta2a=(atan2(z1,x1) + trident) - pi/2;
+theta2b=(atan2(z1,x1) - trident) - pi/2;
+%joint_angles_mat(:,2) = [theta2a, theta2b, theta2a, theta2b]';
 
 %theta 3 solution
 theta3a = pi/2 - atan2(l_4,l_5) - acos((x1^2+z1^2-l_3^2-d^2)/(2*l_3*d));
 theta3b=-theta3a;
-if theta2a > 0
-    joint_angles_mat(:,3) = joint_angles_mat(:,3) + [theta3b, 0, theta3b, 0]';
+if theta3a > 0
+    joint_angles_mat(:,2) = joint_angles_mat(:,2) + [theta2b, 0, theta2b, 0]';
 else
-    joint_angles_mat(:,3) = joint_angles_mat(:,3) + [theta3a, 0, theta3a, 0]';
+    joint_angles_mat(:,2) = joint_angles_mat(:,2) + [theta2a, 0, theta2a, 0]';
 end
-if theta2b > 0
-    joint_angles_mat(:,3) = joint_angles_mat(:,3) + [0, theta3b, 0, theta3b]';
+if theta3b > 0
+    joint_angles_mat(:,2) = joint_angles_mat(:,2) + [0, theta2b, 0, theta2b]';
 else
-    joint_angles_mat(:,3) = joint_angles_mat(:,3) + [0, theta3a, 0, theta3a]';
+    joint_angles_mat(:,2) = joint_angles_mat(:,2) + [0, theta2a, 0, theta2a]';
 end
+joint_angles_mat(:,3) = [theta3b, theta3a, theta3b, theta3a]';
 
 %loop through joint angles matrix (storage for four solutions)
 %we are assuming there are only two solutions with theta1,2 and 3
@@ -169,6 +170,6 @@ for i = 1:length(joint_angles)
     end
 end
 
-joint_angles = round(joint_angles,4)
+joint_angles = round(joint_angles,4);
 
 end
