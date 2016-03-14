@@ -12,7 +12,7 @@ zmin=fanuc.workspace(5);
 zmax=fanuc.workspace(6);
 
 % Shorten variable names
-%l_1 = fanuc.parameters.l_1;
+l_1 = fanuc.parameters.l_1;
 l_2 = fanuc.parameters.l_2;
 l_3 = fanuc.parameters.l_3;
 l_4 = fanuc.parameters.l_4;
@@ -59,7 +59,7 @@ joint_angles_mat(:,1) = ones(4,1)*theta1;
 %theta 2 solutions
 %geometric constants
 x1=sqrt(x^2+y^2)-l_2;
-z1=z;
+z1=z-l_1;
 d=sqrt(l_4^2+l_5^2);
 
 %assumption: two solutions
@@ -123,10 +123,10 @@ for i = 1:2
     F=atan2(R(3,2)/sin(B1),-R(3,1)/sin(B1))+pi;
 
     %checks for singularity at theta5 =0
-    if round(B1,4) == 0
+    if B1 == 0
         C = 0;
         E = atan2(-R(1,2),R(1,1));
-    elseif round(joint_angles(5),4) == pi || round(joint_angles(5),4) == -pi
+    elseif joint_angles(5) == pi || joint_angles(5) == -pi
         C = 0;
         E = atan2(R(1,2),-R(1,1));
     end
@@ -169,7 +169,5 @@ for i = 1:length(joint_angles)
         disp(['joint limit ', num2str(i)])
     end
 end
-
-joint_angles = round(joint_angles,4);
 
 end

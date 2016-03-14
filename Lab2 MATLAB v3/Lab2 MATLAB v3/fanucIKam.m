@@ -4,7 +4,8 @@ l_2 = fanuc.parameters.l_2;
 l_3 = fanuc.parameters.l_3;
 l_4 = fanuc.parameters.l_4;
 l_6 = fanuc.parameters.l_6;
-a_3 = fanuc.parameters.a_3;
+%a_3 = fanuc.parameters.a_3;
+a_3 = 180;
 %rename parameters
 
 positionvector=T(1:3,4);

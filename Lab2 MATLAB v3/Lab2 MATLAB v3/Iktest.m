@@ -17,7 +17,7 @@ fanuc=fanucInit;
 prev_joint_angles=[0,0,0,0,0,0];
 
 for x = linspace(0,2*pi,10)
-    joint_angles=[0,x,0,0,0,0];
+    joint_angles=[x,0,0,0,0,0];
 
     [~,T,~] = fanucFK(joint_angles,fanuc);
 
