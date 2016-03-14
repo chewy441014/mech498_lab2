@@ -144,12 +144,6 @@ for i = 1:6
     joint_limits(i) = fanuc.joint_limits{i}(2);
 end
 
-% for i = 1:4
-%     if sum(abs(joint_angles_mat(i,:)) > joint_limits(i)) > 0
-%         joint_angles_mat(i,:) = ones(1,6)*1000000;
-%     end
-% end
-
 %choose solution
 norm_sol = zeros(1,4);
 for i = 1:4
@@ -169,6 +163,7 @@ for i = 1:length(joint_angles)
     if joint_angles(i) < fanuc.joint_limits{i}(1) || joint_angles(i) > fanuc.joint_limits{i}(2)
         is_solution = false;
         disp(['joint limit ', num2str(i)])
+        disp(joint_angles(i))
     end
 end
 

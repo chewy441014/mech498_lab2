@@ -22,7 +22,7 @@ fanuc.handles = drawFanuc(prev_joint_angles,fanuc);
 hold on;
 
 % Draw in 3D
-for t = 1:size(s,2);
+for t = 1:500;
     
     
     % Set desired brush color from path file (think about how to handle
@@ -33,21 +33,15 @@ for t = 1:size(s,2);
     
     
     % Set desired position for the tool from path file (not your choice)
-    tool_pos = s(1:3,t);
-%     T = eye(4); 
-%     T(1,4) = tool_pos(1); 
-%     T(2,4) = tool_pos(2); 
-%     T(3,4) = tool_pos(3);
-
-    TSG = makehgtform('translate',[tool_pos(1),tool_pos(2),tool_pos(3)-1000]);
-    
+    TSG = makehgtform('translate',[s(1,t),s(2,t),s(3,t)-1000]);
+    [s(1,t),s(2,t),s(3,t)-1000]
     %shifts back from tool frame to end effector frame
     T6G = fanuc.tool{c(t)};
-    T06 = TSG;
+    T06 = TSG
 
     % Solve inverse kinematics for nearest solution
 
-    [is_solution,joint_angles]=fanucIK(T06,prev_joint_angles,fanuc);
+    [is_solution,joint_angles]=fanucIK(T06,prev_joint_angles,fanuc)
     % Move robot using setFanuc() if solution exists
 
     if is_solution == true;
@@ -63,8 +57,10 @@ for t = 1:size(s,2);
     
     plot3(s(1,t),s(2,t),s(3,t),'MarkerEdgeColor',color, 'Marker', '.' ...
         , 'MarkerSize', 18)
-    %plot3(s(1,t),s(2,t),s(3,t),'MarkerEdgeColor',color, 'Marker', '.' ...
-    %    , 'MarkerSize', 18)
+    [~,Tdraw,~] = fanucFK(joint_angles,fanuc);
+    Tdraw
+    plot3(Tdraw(1,4),Tdraw(2,4),Tdraw(3,4),'MarkerEdgeColor',color, 'Marker', '.' ...
+        , 'MarkerSize', 18)
     %pause(0.25)
     
     % Update previous joint angles
