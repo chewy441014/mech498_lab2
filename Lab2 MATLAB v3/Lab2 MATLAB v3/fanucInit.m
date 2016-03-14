@@ -66,7 +66,7 @@ fanuc_struct.tool{4} = makehgtform('zrotate',3*pi/4,...
     'translate',[-l_t_rad,0,0],'yrotate',-pi/4,'translate',[0,0,l_t]);
 
 % FANUC tool brush selection (0 through 4)
-fanuc_struct.brush = 1; % (change this and see what happens)
+fanuc_struct.brush = 0; % (change this and see what happens)
 
 % FANUC tool brush colors (play with these if you want)
 fanuc_struct.brush_colors{1} = [0.4940,0.1840,0.5560];
