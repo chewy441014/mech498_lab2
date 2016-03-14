@@ -23,7 +23,7 @@ for x = linspace(0,2*pi,10)
 
     [~,joint_angles_new]=fanucIK(T,prev_joint_angles,fanuc)
 
-    drawFanuc(joint_angles,fanuc);
+    drawFanuc(joint_angles_new,fanuc);
 end
 %%
 data = load('box.mat');

@@ -33,7 +33,7 @@ for t = 1:500;
     
     
     % Set desired position for the tool from path file (not your choice)
-    TSG = makehgtform('translate',[s(1,t),s(2,t),s(3,t)]);
+    TSG = makehgtform('translate',[s(1,t),s(2,t),s(3,t)-1000]);
     %shifts back from tool frame to end effector frame
     T6G = fanuc.tool{c(t)};
     tool_pos = T6G(1:3,4);

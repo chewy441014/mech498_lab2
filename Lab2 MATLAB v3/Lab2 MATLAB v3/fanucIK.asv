@@ -54,16 +54,7 @@ end
 %theta 1 solution
 %assumption: only one solution
 theta1=atan2(y,x);
-if round(sin(theta1)*1000)/1000 == 0
-    if round(theta1*1000)/1000 ~= 0
-        if theta1 > 0
-            theta1 = theta1 - pi;
-        end
-        if theta1 < 0
-            theta1 = theta1 + pi;
-        end
-    end
-end
+if abs(theta1)  
 joint_angles_mat(:,1) = ones(4,1)*theta1;
 
 %theta 2 solutions
