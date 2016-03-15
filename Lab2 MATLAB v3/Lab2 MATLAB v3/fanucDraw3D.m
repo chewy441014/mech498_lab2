@@ -81,7 +81,6 @@ for t = 1:size(s,2);
     plot3(s(1,t),s(2,t),s(3,t)+1000,'MarkerEdgeColor',color, 'Marker', '.' ...
         , 'MarkerSize', 18)
     
-    
     % Update previous joint angles
     prev_joint_angles = joint_angles;
 
