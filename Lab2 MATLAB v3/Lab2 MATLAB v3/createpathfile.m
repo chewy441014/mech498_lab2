@@ -1,3 +1,6 @@
+%Ian Tomkinson
+%Preston Hill
+%Robotics Lab 2
 %create path file
 
 circ = linspace(0,16*pi,100);

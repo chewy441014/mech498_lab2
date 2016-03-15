@@ -1,5 +1,6 @@
 %Ian Tomkinson
-%Mech 498
+%Preston Hill
+%Mech 498 Lab 2
 
 %codes the inverse kinematics of the manipulator
 function [is_solution,joint_angles]=fanucIK(T,prev_joint_angles,fanuc)

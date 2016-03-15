@@ -1,5 +1,8 @@
 %Ian Tomkinson
+%Preston Hill
 %Robotics Lab 2, Q1
+
+%Generates the Transfer function from DH parameters
 %angles are assumed to be in radians
 
 function T = dhtf(alpha,a,d,theta)

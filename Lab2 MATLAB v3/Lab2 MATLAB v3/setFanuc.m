@@ -1,3 +1,8 @@
+%Ian Tomkinson
+%Preston Hill
+%Robotics Lab 2
+
+
 function setFanuc( angles, fanuc )
 % MECH 498/598 - Intro to Robotics - Spring 2016
 % Lab 2

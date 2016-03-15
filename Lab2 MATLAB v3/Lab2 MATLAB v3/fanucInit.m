@@ -1,3 +1,8 @@
+%Ian Tomkinson
+%Preston Hill
+%Robotics lab 2
+
+
 function [ fanuc_struct ] = fanucInit()
 % MECH 498/598 - Intro to Robotics - Spring 2016
 % Lab 2 - Inverse Kinematics

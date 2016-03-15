@@ -1,4 +1,6 @@
 %Ian Tomkinson
+%Preston Hill
+%Robotics Lab 2
 % Mech 498
 
 function [origin,T,fanuc_T] = fanucFK(joint_angles,fanuc)
