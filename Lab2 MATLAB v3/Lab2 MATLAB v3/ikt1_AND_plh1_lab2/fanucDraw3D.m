@@ -80,11 +80,6 @@ for t = 1:size(s,2);
     % (unless the brush selection is zero)
     plot3(s(1,t),s(2,t),s(3,t)+1000,'MarkerEdgeColor',color, 'Marker', '.' ...
         , 'MarkerSize', 18)
-    [~,~] = fanucFK(joint_angles,fanuc);
-    pos_plot = fanuc_T(1:3,4)
-    [s(1,t), s(2,t), s(3,t)+1000]
-    plot3(pos_plot(1),pos_plot(2),pos_plot(3),'MarkerEdgeColor',color, 'Marker', '.' ...
-        , 'MarkerSize', 18)
     
     % Update previous joint angles
     prev_joint_angles = joint_angles;
