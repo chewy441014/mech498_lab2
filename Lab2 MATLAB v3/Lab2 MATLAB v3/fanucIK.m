@@ -149,7 +149,6 @@ for i = 1:6
     joint_limits(i) = fanuc.joint_limits{i}(2);
 end
 
-joint_angles_mat
 %choose solution
 norm_sol = zeros(1,4);
 for i = 1:4
@@ -162,7 +161,6 @@ if sum(best_sol == norm_sol) > 1
 else
     index = best_sol == norm_sol;
 end
-index
 joint_angles = joint_angles_mat((index)',:);
 
 %compares solution to limits on robot
@@ -173,5 +171,5 @@ for i = 1:length(joint_angles)
         disp(joint_angles(i))
     end
 end
-disp('lol')
+
 end

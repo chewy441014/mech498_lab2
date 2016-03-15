@@ -28,19 +28,20 @@ for t = 1:size(s,2);
     % Set desired brush color from path file (think about how to handle
     % changes in color)
     color = fanuc.brush_colors{c(t)};
-    fanuc.brush = c(t);
+    %fanuc.brush = c(t);
     
     % Select desired orientation for the tool (your choice)
     T = [1 0 0 0; 0 -1 0 0; 0 0 -1 0; 0 0 0 1]; %Orienting z downwards
     
     % Set desired position for the tool from path file (not your choice)
     %shifts back from tool frame to end effector frame
+    rot = makehgtform('zrotate',pi);
     T6G = fanuc.tool{c(t)};
     T(1:3,4) = [s(1,t),s(2,t),s(3,t)]';
     T06 = T*inv(T6G);
 
     % Solve inverse kinematics for nearest solution
-    [is_solution,joint_angles]=fanucIK(T06,prev_joint_angles,fanuc)
+    [is_solution,joint_angles]=fanucIK(T06,prev_joint_angles,fanuc);
     
     % Move robot using setFanuc() if solution exists
     if is_solution == true;

@@ -1,10 +1,10 @@
 %create path file
 
-circ = linspace(0,16*pi,10000);
+circ = linspace(0,16*pi,100);
 s=zeros(3,length(circ));
-s(1,:) = 100*cos(circ) + 750;
-s(2,:) = 100*sin(circ);
-s(3,:) = circ*500/(16*pi) + 500;
+s(1,:) = 50*cos(circ) + 1500;
+s(2,:) = 50*sin(circ);
+s(3,:) = circ*500/(16*pi) + 1000;
 c = ones(1,length(circ)*2);
 c(1:length(circ)/4) = 1;
 c(length(circ):2*length(circ)/4) = 2;
