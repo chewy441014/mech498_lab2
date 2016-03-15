@@ -1,17 +1,14 @@
 %create path file
 
+circ = linspace(0,16*pi,10000);
+s=zeros(3,length(circ));
+s(1,:) = 100*cos(circ) + 750;
+s(2,:) = 100*sin(circ);
+s(3,:) = circ*500/(16*pi) + 500;
+c = ones(1,length(circ)*2);
+c(1:length(circ)/4) = 1;
+c(length(circ):2*length(circ)/4) = 2;
+c(2*length(circ):3*length(circ)/4) = 3;
+c(3*length(circ):length(circ)) = 4;
 
-circ = linspace(0,2*pi,50);
-
-s=1000*ones(3,length(circ)*2);
-
-s(:,1:length(circ))=s(:,1:length(circ))+[100*cos(circ);100*sin(circ);...
-    zeros(1,length(circ))];
-s(:,length(circ)+1:2*length(circ))=s(:,length(circ)+1:2*length(circ))+...
-    [100*cos(circ);zeros(1,length(circ));100*sin(circ)];
-
-
-c(:,1:length(circ))=1;
-c(:,length(circ)+1:2*length(circ))=2;
-
-save('data')
+save('spiral.mat')
