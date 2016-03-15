@@ -24,6 +24,7 @@ for x = linspace(0,2*pi,10)
     [~,joint_angles_new]=fanucIK(T,prev_joint_angles,fanuc)
 
     drawFanuc(joint_angles_new,fanuc);
+    
 end
 %%
 data = load('box.mat');
@@ -44,3 +45,14 @@ color = [1,0,0];
 [~,joint_angles_new]=fanucIK(T3,prev_joint_angles,fanuc)
 drawFanuc(joint_angles_new,fanuc);
 disp(pos);
+%%
+data = load('spiral.mat');
+fanuc = fanucInit;
+s = data.s;
+c = data.c;
+for t = 1:length(s)
+    color = fanuc.brush_colors{c(t)};
+    hold on
+    plot3(s(1,t),s(2,t),s(3,t),'MarkerEdgeColor',color, 'Marker', '.' ...
+        , 'MarkerSize', 18)
+end
