@@ -22,7 +22,7 @@ fanuc.handles = drawFanuc(prev_joint_angles,fanuc);
 hold on;
 
 % Draw in 3D
-for t = 1:500;
+for t = 1:size(s,2);
     
     
     % Set desired brush color from path file (think about how to handle
@@ -36,13 +36,11 @@ for t = 1:500;
     % Set desired position for the tool from path file (not your choice)
     %shifts back from tool frame to end effector frame
     T6G = fanuc.tool{c(t)};
-    tool_pos = T6G(1:3,4);
-    end_pos = s(1:3,t);
-    pos = end_pos - tool_pos;
-    T(1:3,4) = pos;
+    T(1:3,4) = [s(1,t),s(2,t),s(3,t)]';
+    T06 = T*inv(T6G);
 
     % Solve inverse kinematics for nearest solution
-    [is_solution,joint_angles]=fanucIK(T,prev_joint_angles,fanuc);
+    [is_solution,joint_angles]=fanucIK(T06,prev_joint_angles,fanuc)
     
     % Move robot using setFanuc() if solution exists
     if is_solution == true;

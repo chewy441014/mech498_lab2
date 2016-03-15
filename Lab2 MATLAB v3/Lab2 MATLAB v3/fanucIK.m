@@ -22,6 +22,7 @@ l_5 = fanuc.parameters.l_5;
 
 %initialize variables
 is_solution=true;
+joint_angles = zeros(1,6);  
 joint_angles_mat = zeros(4,6);
 
 %end position adjusted for link 5 (rotated according to T)
@@ -69,7 +70,7 @@ joint_angles_mat(:,1) = ones(4,1)*theta1;
 %theta 2 solutions
 %geometric constants
 x1=sqrt(x^2+y^2)-l_2;
-z1=z-1000;
+z1=z;
 d=sqrt(l_4^2+l_5^2);
 beta = atan2(z1,x1);
 
@@ -85,19 +86,15 @@ theta2a=(beta + trident) - pi/2;
 theta2b=(beta - trident) - pi/2;
 
 %theta 3 solution
-theta3a = pi/2 - atan2(l_4,l_5) - acos((x1^2+z1^2-l_3^2-d^2)/(2*l_3*d));
-theta3b=-theta3a;
-if theta3a > 0
-    joint_angles_mat(:,2) = joint_angles_mat(:,2) + [theta2b, 0, theta2b, 0]';
+trident2 = acos((x1^2+z1^2-l_3^2-d^2)/(2*l_3*d));
+theta3a = pi/2 - atan2(l_4,l_5) + trident2;
+theta3b = pi/2 - atan2(l_4,l_5) - trident2;
+if trident2 > 0
+    joint_angles_mat(:,2) = [theta2b, theta2a, theta2b, theta2a]';
 else
-    joint_angles_mat(:,2) = joint_angles_mat(:,2) + [theta2a, 0, theta2a, 0]';
+    joint_angles_mat(:,2) = [theta2a, theta2b, theta2a, theta2b]';
 end
-if theta3b > 0
-    joint_angles_mat(:,2) = joint_angles_mat(:,2) + [0, theta2b, 0, theta2b]';
-else
-    joint_angles_mat(:,2) = joint_angles_mat(:,2) + [0, theta2a, 0, theta2a]';
-end
-joint_angles_mat(:,3) = [theta3b, theta3a, theta3b, theta3a]';
+joint_angles_mat(:,3) = [theta3a, theta3b, theta3a, theta3b]';
 
 %loop through joint angles matrix (storage for four solutions)
 %we are assuming there are only two solutions with theta1,2 and 3
@@ -107,7 +104,7 @@ for i = 1:2
     joint_angles = joint_angles_mat(i,:);
     
     T01 = dhtf(0,0,0,joint_angles(1));
-    T12 = dhtf(pi/2,l_2,0,joint_angles(2));
+    T12 = dhtf(pi/2,l_2,0,joint_angles(2)+pi/2);
     T23 = dhtf(0,l_3,0,joint_angles(3));
     T34 = dhtf(pi/2,l_4,l_5,0);
     R01 = T01(1:3,1:3);
@@ -118,35 +115,35 @@ for i = 1:2
     R = R04'*T(1:3,1:3);
     
     %theta 5 solutions
-    B1 = atan2(sqrt(R(3,1)^2+R(3,2)^2),R(3,3))  - pi/2;
-    B2 = atan2(-sqrt(R(3,1)^2+R(3,2)^2),R(3,3)) - pi/2;
-    if round(B1*10000)/10000 > pi || round(B1*10000)/10000 < 0
-        B1 = B2;
-    end
-    joint_angles_mat(i,5) = B1;
-    joint_angles_mat(i+2,5) = B1;
+    if round(R(3,3)*10000)/10000 ~= 1 || round(R(3,3)*10000)/10000 ~= -1
+        B1 = atan2(sqrt(R(3,1)^2+R(3,2)^2),R(3,3));
+        B2 = atan2(-sqrt(R(3,1)^2+R(3,2)^2),R(3,3));
+        joint_angles_mat(i,5) = B1;
+        joint_angles_mat(i+2,5) = B2;
 
-    %theta 4 solutions
-    C=atan2(R(2,3)/sin(B1),R(1,3)/sin(B1));
-    D=atan2(R(2,3)/sin(B1),R(1,3)/sin(B1))+pi;
-    
-    %theta 6 solution
-    E=atan2(R(3,2)/sin(B1),-R(3,1)/sin(B1));
-    F=atan2(R(3,2)/sin(B1),-R(3,1)/sin(B1))+pi;
+        %theta 4 solutions
+        C=atan2(R(2,3)/sin(B1),R(1,3)/sin(B1));
+        D=atan2(R(2,3)/sin(B2),R(1,3)/sin(B2));
 
-    %checks for singularity at theta5 =0
-    if round(sin(B1)*1000)/1000 == 0
+        %theta 6 solution
+        E=atan2(R(3,2)/sin(B1),-R(3,1)/sin(B1));
+        F=atan2(R(3,2)/sin(B2),-R(3,1)/sin(B2));
+
+        joint_angles_mat(i,4) = C;
+        joint_angles_mat(i+2,4) = D;
+        joint_angles_mat(i,6) = F;
+        joint_angles_mat(i+2,6) = E;
+    else
+        %checks for singularity at theta5 =0
         C = 0;
         E = atan2(-R(1,2),R(1,1));
-        disp('triggered!')
+        disp('Singular time')
+        joint_angles_mat(i,4) = C;
+        joint_angles_mat(i+2,4) = C;
+        joint_angles_mat(i,6) = E;
+        joint_angles_mat(i+2,6) = E;
     end
-    
-    joint_angles_mat(i,4) = C;
-    joint_angles_mat(i+2,4) = D;
-    joint_angles_mat(i,6) = F;
-    joint_angles_mat(i+2,6) = E;
 end
-
 joint_limits = zeros(1,6);
 for i = 1:6
     joint_limits(i) = fanuc.joint_limits{i}(2);
@@ -165,6 +162,7 @@ if sum(best_sol == norm_sol) > 1
 else
     index = best_sol == norm_sol;
 end
+index
 joint_angles = joint_angles_mat((index)',:);
 
 %compares solution to limits on robot
@@ -175,5 +173,5 @@ for i = 1:length(joint_angles)
         disp(joint_angles(i))
     end
 end
-
+disp('lol')
 end
