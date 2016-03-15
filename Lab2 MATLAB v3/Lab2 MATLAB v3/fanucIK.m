@@ -13,17 +13,13 @@ zmin=fanuc.workspace(5);
 zmax=fanuc.workspace(6);
 
 % Shorten variable names
-%l_1 = fanuc.parameters.l_1;
 l_2 = fanuc.parameters.l_2;
 l_3 = fanuc.parameters.l_3;
 l_4 = fanuc.parameters.l_4;
 l_5 = fanuc.parameters.l_5;
-%l_t = fanuc.parameters.l_t
-%l_t_rad = fanuc.parameters.l_t_rad
 
 %initialize variables
 is_solution=true;
-joint_angles = zeros(1,6);  
 joint_angles_mat = zeros(4,6);
 
 %end position adjusted for link 5 (rotated according to T)
@@ -132,8 +128,8 @@ for i = 1:2
 
         joint_angles_mat(i,4) = C;
         joint_angles_mat(i+2,4) = D;
-        joint_angles_mat(i,6) = F;
-        joint_angles_mat(i+2,6) = E;
+        joint_angles_mat(i,6) = E;
+        joint_angles_mat(i+2,6) = F;
     else
         %checks for singularity at theta5 =0
         C = 0;

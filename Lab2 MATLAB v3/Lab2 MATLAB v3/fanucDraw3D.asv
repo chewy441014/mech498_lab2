@@ -1,3 +1,8 @@
+%Ian Tomkinson
+%Preston Hill
+%Robotics Lab 2
+
+
 function fanucDraw3D( path_file )
 % MECH 498/598 - Intro to Robotics - Spring 2016
 % Lab 2 - Inverse Kinematics
@@ -22,57 +27,60 @@ fanuc.handles = drawFanuc(prev_joint_angles,fanuc);
 hold on;
 
 % Draw in 3D
-for t = 1:500;
+for t = 1:size(s,2);
     
     
     % Set desired brush color from path file (think about how to handle
     % changes in color)
+    fanuc.brush = c(t);
     color = fanuc.brush_colors{c(t)};
     
     % Select desired orientation for the tool (your choice)
-    
+    T = eye(4); T(2,2) = -1; T(3,3) = -1; %Orienting z downwards
     
     % Set desired position for the tool from path file (not your choice)
-    TSG = makehgtform('translate',[s(1,t),s(2,t),s(3,t)]);
     %shifts back from tool frame to end effector frame
     T6G = fanuc.tool{c(t)};
-    tool_pos = T6G(1:3,4);
-    end_pos = s(1:3,t);
-    T = eye(4); 
-    pos = end_pos - tool_pos
-    T(1:3,4) = pos;
+    T(1:3,4) = [s(1,t),s(2,t),s(3,t)]';
+    T06 = T*inv(T6G);
 
     % Solve inverse kinematics for nearest solution
-
-    [is_solution,joint_angles]=fanucIK(T,prev_joint_angles,fanuc);
+    [is_solution,joint_angles]=fanucIK(T06,prev_joint_angles,fanuc);
+    
+    %turns the tool slowly
+    if t > 1
+        if c(t-1) ~= c(t)
+            a = prev_joint_angles(6);
+            b = joint_angles(6);
+            x = linspace(prev_joint_angles,joint_angles);
+            fanuc.brush = 0;
+            for i = 1:size(x,2)
+                if is_solution == true
+                    new_angles = prev_joint_angles;
+                    new_angles = x(i);
+                    setFanuc(new_angles,fanuc)
+                end
+            end
+            fanuc.brush = c(t);
+        end
+    end
+    
     % Move robot using setFanuc() if solution exists
-
     if is_solution == true;
         setFanuc(joint_angles, fanuc);
-        %disp(num2str(t))
     else
         disp('The solution does not exist')
     end
 
     % Plot a point at the tool brush tip with the appropriate color
     % (unless the brush selection is zero)
-    ...
-    
-    plot3(s(1,t),s(2,t),s(3,t),'MarkerEdgeColor',color, 'Marker', '.' ...
+    plot3(s(1,t),s(2,t),s(3,t)+1000,'MarkerEdgeColor',color, 'Marker', '.' ...
         , 'MarkerSize', 18)
-    [~,Tdraw,~] = fanucFK(joint_angles,fanuc);
-    plot3(Tdraw(1,4),Tdraw(2,4),Tdraw(3,4),'MarkerEdgeColor',color, 'Marker', '.' ...
-        , 'MarkerSize', 18)
-    %pause(0.25)
     
     % Update previous joint angles
-    ...
     prev_joint_angles = joint_angles;
 
 end
-
-
-
 
 end
 

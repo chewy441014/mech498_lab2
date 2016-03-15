@@ -15,17 +15,8 @@
 %%
 fanuc=fanucInit;
 prev_joint_angles=[0,0,0,0,0,0];
-
-for x = linspace(0,2*pi,10)
-    joint_angles=[0,x,0,0,0,0];
-
-    [~,T,~] = fanucFK(joint_angles,fanuc);
-
-    [~,joint_angles_new]=fanucIK(T,prev_joint_angles,fanuc)
-
-    drawFanuc(joint_angles_new,fanuc);
-    
-end
+fanuc.brush = 2;
+drawFanuc(prev_joint_angles,fanuc);
 %%
 data = load('box.mat');
 s = data.s; % position

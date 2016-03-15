@@ -71,13 +71,13 @@ fanuc_struct.tool{4} = makehgtform('zrotate',3*pi/4,...
     'translate',[-l_t_rad,0,0],'yrotate',-pi/4,'translate',[0,0,l_t]);
 
 % FANUC tool brush selection (0 through 4)
-fanuc_struct.brush = 1; % (change this and see what happens)
+fanuc_struct.brush = 0; % (change this and see what happens)
 
 % FANUC tool brush colors (play with these if you want)
-fanuc_struct.brush_colors{1} = [0.4940,0.1840,0.5560];
-fanuc_struct.brush_colors{2} = [0.9290,0.6940,0.1250];
-fanuc_struct.brush_colors{3} = [0.8500,0.3250,0.0980];
-fanuc_struct.brush_colors{4} = [0,0.4470,0.7410];
+fanuc_struct.brush_colors{1} = 1/255*[255,148,225];
+fanuc_struct.brush_colors{2} = 1/255*[173,87,255];
+fanuc_struct.brush_colors{3} = 1/255*[111,164,255];
+fanuc_struct.brush_colors{4} = 1/255*[126,230,255];
 
 % FANUC base (zero) frame relative to the "station" frame
 fanuc_struct.base = makehgtform('translate',[0,0,l_1]);
