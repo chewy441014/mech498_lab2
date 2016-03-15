@@ -31,7 +31,7 @@ for t = 1:500;
     fanuc.brush = c(t);
     
     % Select desired orientation for the tool (your choice)
-    T = eye(4); %We don't mind using just the eye matrix.
+    T = [1 0 0 0; 0 -1 0 0; 0 0 -1 0; 0 0 0 1]; %Orienting z downwards
     
     % Set desired position for the tool from path file (not your choice)
     %shifts back from tool frame to end effector frame
@@ -39,7 +39,7 @@ for t = 1:500;
     tool_pos = T6G(1:3,4);
     end_pos = s(1:3,t);
     pos = end_pos - tool_pos;
-    T(1:3,4) = pos
+    T(1:3,4) = pos;
 
     % Solve inverse kinematics for nearest solution
     [is_solution,joint_angles]=fanucIK(T,prev_joint_angles,fanuc);
@@ -53,12 +53,12 @@ for t = 1:500;
 
     % Plot a point at the tool brush tip with the appropriate color
     % (unless the brush selection is zero)
-    plot3(s(1,t),s(2,t),s(3,t),'MarkerEdgeColor',color, 'Marker', '.' ...
+    plot3(s(1,t),s(2,t),s(3,t)+1000,'MarkerEdgeColor',color, 'Marker', '.' ...
         , 'MarkerSize', 18)
-    [~,Tdraw,~] = fanucFK(joint_angles,fanuc)
-    plot3(Tdraw(1,4),Tdraw(2,4),Tdraw(3,4),'MarkerEdgeColor',color, 'Marker', '.' ...
-        , 'MarkerSize', 18)
-    
+%     [~,Tdraw,~] = fanucFK(joint_angles,fanuc)
+%     plot3(Tdraw(1,4),Tdraw(2,4),Tdraw(3,4),'MarkerEdgeColor',color, 'Marker', '.' ...
+%         , 'MarkerSize', 18)
+%     
     % Update previous joint angles
     ...
     prev_joint_angles = joint_angles;
