@@ -69,7 +69,7 @@ joint_angles_mat(:,1) = ones(4,1)*theta1;
 %theta 2 solutions
 %geometric constants
 x1=sqrt(x^2+y^2)-l_2;
-z1=z;
+z1=z-1000;
 d=sqrt(l_4^2+l_5^2);
 beta = atan2(z1,x1);
 
